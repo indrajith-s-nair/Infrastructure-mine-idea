@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-card: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --gov-navy: #0b2545;
+    --gov-blue: #134074;
+    --gov-accent: #0ea5e9;
+    --gov-emerald: #059669;
+    --gov-amber: #d97706;
+    --gov-red: #dc2626;
+  }
+
+  .dark {
+    --bg-primary: #0b0f19;
+    --bg-surface: #111827;
+    --bg-card: #162032;
+    --border-color: #273549;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --gov-navy: #1e3a8a;
+    --gov-blue: #38bdf8;
+    --gov-accent: #38bdf8;
+    --gov-emerald: #10b981;
+    --gov-amber: #f59e0b;
+    --gov-red: #ef4444;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* Leaflet Map Styles */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
+  z-index: 10;
+  font-family: inherit;
+}
+
+/* Voice waveform animation */
+@keyframes audio-wave {
+  0%, 100% {
+    height: 6px;
+  }
+  50% {
+    height: 28px;
+  }
+}
+
+.animate-audio-bar-1 { animation: audio-wave 1.2s ease-in-out infinite; }
+.animate-audio-bar-2 { animation: audio-wave 0.8s ease-in-out 0.2s infinite; }
+.animate-audio-bar-3 { animation: audio-wave 1.5s ease-in-out 0.4s infinite; }
+.animate-audio-bar-4 { animation: audio-wave 0.9s ease-in-out 0.1s infinite; }
+.animate-audio-bar-5 { animation: audio-wave 1.3s ease-in-out 0.3s infinite; }
+.animate-audio-bar-6 { animation: audio-wave 0.7s ease-in-out 0.5s infinite; }
+
+/* Pulse Glow for Live Recording */
+@keyframes record-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.recording-pulse {
+  animation: record-pulse 1.8s infinite;
+}

@@ -1,0 +1,1 @@
+import os; from dotenv import load_dotenv; load_dotenv("../.env"); from google import genai; from google.genai import types; client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY")); print(client.chats.create(model="gemini-2.5-flash").send_message("hi").text)

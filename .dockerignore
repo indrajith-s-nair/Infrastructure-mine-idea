@@ -1,0 +1,17 @@
+.git
+.gitignore
+.DS_Store
+*.pyc
+__pycache__
+backend/venv
+backend/media/*
+!backend/media/.gitkeep
+backend/staticfiles
+frontend/node_modules
+frontend/.next
+frontend/out
+.playwright-mcp
+.vscode
+.idea
+*.log
+.env

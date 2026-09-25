@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dpip-web-service
+  namespace: dpip
+  labels:
+    app.kubernetes.io/name: dpip-platform
+    app.kubernetes.io/component: frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: dpip-platform
+  ports:
+  - name: http-web
+    port: 3000
+    targetPort: 3000
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dpip-api-service
+  namespace: dpip
+  labels:
+    app.kubernetes.io/name: dpip-platform
+    app.kubernetes.io/component: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: dpip-platform
+  ports:
+  - name: http-api
+    port: 8000
+    targetPort: 8000
+    protocol: TCP

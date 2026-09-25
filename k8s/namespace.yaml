@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dpip
+  labels:
+    name: dpip
+    app.kubernetes.io/name: dpip-platform
+    app.kubernetes.io/part-of: national-digital-public-infrastructure

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpip-platform-deployment
+  namespace: dpip
+  labels:
+    app.kubernetes.io/name: dpip-platform
+    app.kubernetes.io/component: unified-server
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: dpip-platform
+  template:
+    metadata:
+      labels:
+        app: dpip-platform
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+    spec:
+      containers:
+      - name: dpip-unified-app
+        image: anonymous9329/infrastructure-mine-idea:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http-web
+          containerPort: 3000
+          protocol: TCP
+        - name: http-api
+          containerPort: 8000
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: dpip-config
+        - secretRef:
+            name: dpip-secrets
+        resources:
+          requests:
+            cpu: "300m"
+            memory: "768Mi"
+          limits:
+            cpu: "1500m"
+            memory: "3072Mi"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /api/complaints/stats/
+            port: 8000
+          initialDelaySeconds: 35
+          periodSeconds: 15
+          timeoutSeconds: 5

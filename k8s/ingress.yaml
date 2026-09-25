@@ -1,0 +1,53 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dpip-ingress
+  namespace: dpip
+  labels:
+    app.kubernetes.io/name: dpip-platform
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "180"
+spec:
+  rules:
+  - host: dpip.gov.in
+    http:
+      paths:
+      # Route Django REST API, Admin, and Static/Media Assets
+      - path: /api/
+        pathType: Prefix
+        backend:
+          service:
+            name: dpip-api-service
+            port:
+              number: 8000
+      - path: /admin/
+        pathType: Prefix
+        backend:
+          service:
+            name: dpip-api-service
+            port:
+              number: 8000
+      - path: /media/
+        pathType: Prefix
+        backend:
+          service:
+            name: dpip-api-service
+            port:
+              number: 8000
+      - path: /static/
+        pathType: Prefix
+        backend:
+          service:
+            name: dpip-api-service
+            port:
+              number: 8000
+      # Route Next.js Frontend for Root Web Traffic
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dpip-web-service
+            port:
+              number: 3000

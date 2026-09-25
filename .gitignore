@@ -1,0 +1,118 @@
+# ==============================================================================
+# Environment Variables & Sensitive Credentials
+# ==============================================================================
+.env
+.env.*
+*.env
+!.env.example
+
+# ==============================================================================
+# Python & Django Artifacts
+# ==============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+venv*/
+ENV/
+env/
+.venv/
+backend/venv/
+
+# SQLite & Databases
+*.sqlite3
+*.sqlite3-journal
+db.sqlite3
+db.sqlite3-journal
+backend/db.sqlite3
+backend/db.sqlite3-journal
+
+# Django Static & Media Uploads
+staticfiles/
+backend/staticfiles/
+media/
+backend/media/*
+!backend/media/.gitkeep
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# ==============================================================================
+# Frontend & Node.js Artifacts (Next.js)
+# ==============================================================================
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Next.js Build Output
+.next/
+frontend/.next/
+out/
+frontend/out/
+frontend/build/
+.next/cache/
+
+# Coverage & Tests
+coverage/
+.nyc_output/
+*.lcov
+.playwright-mcp/
+test-results/
+playwright-report/
+
+# TypeScript / Linters
+*.tsbuildinfo
+next-env.d.ts
+.eslintcache
+
+# ==============================================================================
+# OS & IDE Files
+# ==============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Logs & Temp
+*.log
+logs/
+*.tmp
+*.bak
