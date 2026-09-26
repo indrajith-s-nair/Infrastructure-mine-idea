@@ -1,12 +1,24 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Noto_Sans, Noto_Serif } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 
-const inter = Inter({ subsets: ['latin'] });
+const notoSans = Noto_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-noto-sans',
+  display: 'swap',
+});
+
+const notoSerif = Noto_Serif({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  variable: '--font-noto-serif',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'DPIP Citizen Portal | National Grievance Redressal Platform',
@@ -18,9 +30,9 @@ export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}): React.JSX.Element {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${notoSans.variable} ${notoSerif.variable}`}>
       <head>
         <link
           rel="stylesheet"
@@ -29,7 +41,7 @@ export default function RootLayout({
           crossOrigin=""
         />
       </head>
-      <body className={`${inter.className} min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white`}>
+      <body className={`${notoSans.className} font-sans min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white`}>
         <ThemeProvider>
           <AuthProvider>
             <Navbar />
@@ -41,3 +53,4 @@ export default function RootLayout({
     </html>
   );
 }
+
