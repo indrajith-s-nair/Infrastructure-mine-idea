@@ -13,12 +13,16 @@ import {
   Loader2,
   AlertCircle,
   User as UserIcon,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function RegisterPage() {
   const router = useRouter();
   const { register } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -56,22 +60,47 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-8 bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-[88vh] flex items-center justify-center px-4 py-8 bg-slate-50 dark:bg-slate-950">
       <div className="w-full max-w-md space-y-6">
         
+        {/* Top Controls: Theme Toggle */}
+        <div className="flex items-center justify-between">
+          <Link href="/login" className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">
+            ← Back to Login
+          </Link>
+          <button
+            onClick={toggleTheme}
+            type="button"
+            aria-label="Toggle Theme"
+            className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer shadow-xs"
+          >
+            {theme === 'dark' ? (
+              <>
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <span className="text-[11px]">Light Mode</span>
+              </>
+            ) : (
+              <>
+                <Moon className="w-3.5 h-3.5 text-slate-600" />
+                <span className="text-[11px]">Dark Mode</span>
+              </>
+            )}
+          </button>
+        </div>
+
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-blue-600/30">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-blue-600/20">
             <Building2 className="w-8 h-8" />
           </div>
           <div>
             <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
               National Digital Public Infrastructure
             </span>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-serif">
               Citizen Enrollment
             </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               Register your citizen account to file and track public grievances
             </p>
           </div>

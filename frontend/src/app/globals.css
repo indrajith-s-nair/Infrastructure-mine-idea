@@ -12,21 +12,21 @@
     --bg-card: #ffffff;
     --border-color: #e2e8f0;
     --text-primary: #0f172a;
-    --text-secondary: #475569;
+    --text-secondary: #334155;
     --text-muted: #64748b;
-    --gov-navy: #0b2545;
-    --gov-blue: #134074;
-    --gov-accent: #0ea5e9;
+    --gov-navy: #0a2540;
+    --gov-blue: #1d4ed8;
+    --gov-accent: #0284c7;
     --gov-emerald: #059669;
     --gov-amber: #d97706;
     --gov-red: #dc2626;
   }
 
   .dark {
-    --bg-primary: #0b0f19;
-    --bg-surface: #111827;
-    --bg-card: #162032;
-    --border-color: #273549;
+    --bg-primary: #0b1120;
+    --bg-surface: #0f172a;
+    --bg-card: #131d33;
+    --border-color: #1e293b;
     --text-primary: #f8fafc;
     --text-secondary: #cbd5e1;
     --text-muted: #94a3b8;
@@ -45,7 +45,9 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 

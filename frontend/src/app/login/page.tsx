@@ -23,8 +23,11 @@ import {
   Eye,
   EyeOff,
   HelpCircle,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { api } from '@/lib/api';
 
 const PREDEFINED_OFFICER_CREDENTIALS = [
@@ -187,22 +190,52 @@ function LoginForm() {
     setRecoveredAccounts([]);
   };
 
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <div className="w-full max-w-lg space-y-6">
+    <div className="w-full max-w-lg space-y-6 relative">
+      {/* Top Controls: Theme Toggle */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+            DPIP National Redressal Platform
+          </span>
+        </div>
+        <button
+          onClick={toggleTheme}
+          type="button"
+          aria-label="Toggle Theme"
+          className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer shadow-xs"
+        >
+          {theme === 'dark' ? (
+            <>
+              <Sun className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline text-[11px]">Light Mode</span>
+            </>
+          ) : (
+            <>
+              <Moon className="w-3.5 h-3.5 text-slate-600" />
+              <span className="hidden sm:inline text-[11px]">Dark Mode</span>
+            </>
+          )}
+        </button>
+      </div>
+
       {/* Header Logo */}
-      <div className="text-center space-y-2">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-blue-600/30">
+      <div className="text-center space-y-2 pt-2">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-blue-600/20">
           <Building2 className="w-8 h-8" />
         </div>
         <div>
           <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
             Digital Public Infrastructure Portal
           </span>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-serif">
             Official Access Gateway
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Secure login for Citizens, Central Triage Desk, and Frontline Officers
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-sm mx-auto">
+            Secure multi-role authentication for Citizens, Central Triage Desk, and Municipal Officers
           </p>
         </div>
       </div>

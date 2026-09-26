@@ -190,17 +190,17 @@ function CivicFeedbackContent() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Top Banner */}
-      <div className="rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-6 sm:p-10 shadow-xl border border-blue-800/40 relative overflow-hidden">
+      <div className="rounded-3xl bg-gradient-to-r from-blue-950 via-indigo-950 to-slate-900 text-white p-6 sm:p-10 shadow-xl border border-blue-900/40 relative overflow-hidden">
         <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-3xl space-y-3 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold">
             <Award className="w-3.5 h-3.5" />
-            <span>Digital Public Infrastructure Framework</span>
+            <span>Digital Public Infrastructure Framework • Citizen Feedback</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white font-serif">
             Civic Survey & Grievance Feedback
           </h1>
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+          <p className="text-xs sm:text-base text-slate-300 leading-relaxed font-sans">
             Your evaluation directly scores municipal field officer performance, verifies work quality,
             and guides capital infrastructure upgrades across city corridors.
           </p>

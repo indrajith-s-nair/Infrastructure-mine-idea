@@ -113,23 +113,23 @@ export default function RegisterComplaintPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6 sm:space-y-8">
       {/* Header Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-blue-900 to-indigo-900 p-6 sm:p-8 text-white space-y-2 shadow-lg">
+      <div className="rounded-3xl bg-gradient-to-r from-blue-950 via-indigo-950 to-slate-900 p-6 sm:p-8 text-white space-y-2.5 shadow-xl border border-blue-900/40">
         <div className="flex items-center gap-2 text-xs font-semibold text-blue-300 uppercase tracking-wider">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>Official Digital Public Infrastructure Redressal</span>
+          <span>National Grievance Redressal Gateway</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-          Register a Citizen Grievance
+        <h1 className="text-2xl sm:text-3xl font-black tracking-tight font-serif text-white">
+          Register Public Grievance
         </h1>
         <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-          Submit details regarding civic, road, electrical, sanitation, or municipal problems. Attach voice notes and drop a GPS pin for faster jurisdictional action.
+          Submit details regarding municipal, road, electrical, water, or sanitation problems. Attach voice notes and drop a GPS pin for immediate jurisdictional routing.
         </p>
       </div>
 
       {/* Form Card */}
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-xl">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-xl">
         <form onSubmit={handleSubmit} className="space-y-8">
           {errorMessage && (
             <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-xs text-red-700 dark:text-red-300 flex items-center gap-3 animate-in fade-in">

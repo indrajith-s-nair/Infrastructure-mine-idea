@@ -75,11 +75,11 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-lg text-slate-900 dark:text-white">
+              <span className="font-bold text-lg text-slate-900 dark:text-white font-serif">
                 Digital Public Infrastructure Platform
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-md">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed max-w-md">
               A citizen-centric governance initiative designed for transparent, timely, and geo-verified public grievance redressal across municipal and administrative jurisdictions.
             </p>
             <p className="text-[11px] text-slate-400 dark:text-slate-500">

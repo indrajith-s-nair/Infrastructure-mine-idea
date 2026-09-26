@@ -122,16 +122,16 @@ export default function TrackComplaintDetailPage() {
       )}
 
       {complaint && !loading && (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           {/* Header Card */}
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-xl space-y-4">
+          <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-xl space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                     Grievance Telemetry
                   </span>
-                  <span className="text-xs font-mono font-black text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-sm bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-900">
+                  <span className="text-xs font-mono font-black text-blue-600 dark:text-blue-400 px-2.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-900">
                     {complaint.tracking_code}
                   </span>
                   {complaint.is_reopened && (
@@ -149,7 +149,7 @@ export default function TrackComplaintDetailPage() {
                     </span>
                   )}
                 </div>
-                <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-serif">
                   {complaint.description}
                 </h1>
               </div>

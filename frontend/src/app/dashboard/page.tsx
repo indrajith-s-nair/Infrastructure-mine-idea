@@ -131,28 +131,28 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6 sm:space-y-8">
       {/* Citizen Greeting Card */}
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-              Verified Citizen Account
+            <span className="text-[11px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
+              Verified Citizen Profile
             </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">
-              Active
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
+              Active Session
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-serif">
             Welcome back, {user?.name || 'Citizen'}
           </h1>
-          <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-slate-400" />
+          <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
+            <span className="flex items-center gap-1.5 font-medium">
+              <Mail className="w-3.5 h-3.5 text-blue-500" />
               {user?.email}
             </span>
-            <span className="flex items-center gap-1.5">
-              <Phone className="w-3.5 h-3.5 text-slate-400" />
+            <span className="flex items-center gap-1.5 font-medium">
+              <Phone className="w-3.5 h-3.5 text-emerald-500" />
               {user?.phone_number}
             </span>
           </div>
@@ -161,16 +161,16 @@ export default function DashboardPage() {
         {/* Action Button */}
         <Link
           href="/complaints/register"
-          className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white text-sm font-bold shadow-lg shadow-emerald-900/30 hover:shadow-emerald-900/50 transition-all flex items-center justify-center gap-2 cursor-pointer self-start md:self-auto"
+          className="min-h-[44px] px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-900/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer self-start md:self-auto"
         >
-          <PlusCircle className="w-5 h-5 stroke-[2.5]" />
-          <span>Register a Grievance</span>
+          <PlusCircle className="w-4 h-4 stroke-[2.5]" />
+          <span>Register New Grievance</span>
         </Link>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20 shadow-xs space-y-2">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+        <div className="p-5 sm:p-6 rounded-3xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/60 dark:bg-amber-950/20 shadow-xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
               Under Review
@@ -180,10 +180,10 @@ export default function DashboardPage() {
           <p className="text-3xl font-black font-mono text-slate-900 dark:text-white">
             {pendingCount}
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Awaiting municipal verification</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Awaiting municipal verification</p>
         </div>
 
-        <div className="p-6 rounded-2xl border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 shadow-xs space-y-2">
+        <div className="p-5 sm:p-6 rounded-3xl border border-blue-200 dark:border-blue-900/60 bg-blue-50/60 dark:bg-blue-950/20 shadow-xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-300">
               In Progress
@@ -193,25 +193,25 @@ export default function DashboardPage() {
           <p className="text-3xl font-black font-mono text-slate-900 dark:text-white">
             {inProgressCount}
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Field work & repair dispatched</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Field work & repair dispatched</p>
         </div>
 
-        <div className="p-6 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 shadow-xs space-y-2">
+        <div className="p-5 sm:p-6 rounded-3xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/60 dark:bg-emerald-950/20 shadow-xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
-              Resolved & Proof Uploaded
+              Verified Resolved
             </span>
             <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           </div>
           <p className="text-3xl font-black font-mono text-slate-900 dark:text-white">
             {resolvedCount}
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Official closure documents ready</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Official closure documents ready</p>
         </div>
       </div>
 
       {/* Track Any Complaint Search Bar */}
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xl">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 shadow-xl">
         <form onSubmit={handleQuickTrack} className="flex flex-col sm:flex-row gap-3 items-center">
           <div className="relative flex-1 w-full">
             <input
@@ -219,14 +219,14 @@ export default function DashboardPage() {
               placeholder="Track any reference number (e.g. DPIP-2026-YHZ6DB)..."
               value={quickTrackInput}
               onChange={(e) => setQuickTrackInput(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-mono uppercase placeholder:normal-case placeholder:font-sans placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              className="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-mono uppercase placeholder:normal-case placeholder:font-sans placeholder-slate-400 text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 transition-all"
             />
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
           </div>
           <button
             type="submit"
             disabled={!quickTrackInput.trim()}
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto min-h-[44px] px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <Search className="w-4 h-4" />
             <span>Track Status</span>
@@ -235,13 +235,13 @@ export default function DashboardPage() {
       </div>
 
       {/* My Complaints Section */}
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-xl space-y-6">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-xl space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+            <h2 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white font-serif">
               My Registered Grievances
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
               Live status overview of issues submitted under your citizen ID.
             </p>
           </div>
