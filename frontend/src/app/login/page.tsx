@@ -2,6 +2,7 @@
 
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
+
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Building2,
@@ -15,8 +16,16 @@ import {
   ChevronDown,
   ChevronUp,
   Info,
+  KeyRound,
+  CheckCircle2,
+  X,
+  Phone,
+  Eye,
+  EyeOff,
+  HelpCircle,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { api } from '@/lib/api';
 
 const PREDEFINED_OFFICER_CREDENTIALS = [
   { designation: 'Sanitary Inspector', dept: 'Sanitation & Solid Waste Management', email: 'officer.sanitary@dpip.gov.in', password: 'Officer@123' },
@@ -46,6 +55,21 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showDirectory, setShowDirectory] = useState(false);
+
+  // Credential Recovery Modal State
+  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+  const [recoveryTab, setRecoveryTab] = useState<'RESET_PASSWORD' | 'FIND_USERNAME'>('RESET_PASSWORD');
+  const [recoveryStep, setRecoveryStep] = useState<'REQUEST_OTP' | 'CONFIRM_PASSWORD' | 'SUCCESS'>('REQUEST_OTP');
+  const [recoveryIdentifier, setRecoveryIdentifier] = useState('');
+  const [recoveryOtp, setRecoveryOtp] = useState('');
+  const [recoveryNewPassword, setRecoveryNewPassword] = useState('');
+  const [recoveryConfirmPassword, setRecoveryConfirmPassword] = useState('');
+  const [recoveryMaskedEmail, setRecoveryMaskedEmail] = useState('');
+  const [recoveryLoading, setRecoveryLoading] = useState(false);
+  const [recoveryError, setRecoveryError] = useState<string | null>(null);
+  const [recoverySuccessMsg, setRecoverySuccessMsg] = useState<string | null>(null);
+  const [recoveredAccounts, setRecoveredAccounts] = useState<Array<{ name: string; masked_email: string; role: string }>>([]);
+  const [showPasswordText, setShowPasswordText] = useState(false);
 
   const handleTabChange = (tab: 'CITIZEN' | 'OFFICER' | 'CENTRAL_DESK') => {
     setActiveTab(tab);
@@ -84,6 +108,83 @@ function LoginForm() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRequestOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRecoveryError(null);
+    setRecoveryLoading(true);
+    try {
+      const res = await api.auth.requestPasswordReset(recoveryIdentifier.trim());
+      setRecoveryMaskedEmail(res.masked_email);
+      setRecoverySuccessMsg(res.message);
+      setRecoveryStep('CONFIRM_PASSWORD');
+    } catch (err: any) {
+      setRecoveryError(err.message || 'Failed to request OTP. Please verify your details.');
+    } finally {
+      setRecoveryLoading(false);
+    }
+  };
+
+  const handleConfirmReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRecoveryError(null);
+
+    if (recoveryNewPassword !== recoveryConfirmPassword) {
+      setRecoveryError('Passwords do not match. Please re-enter.');
+      return;
+    }
+    if (recoveryNewPassword.length < 6) {
+      setRecoveryError('Password must be at least 6 characters long.');
+      return;
+    }
+
+    setRecoveryLoading(true);
+    try {
+      const res = await api.auth.confirmPasswordReset({
+        identifier: recoveryIdentifier.trim(),
+        otp_code: recoveryOtp.trim(),
+        new_password: recoveryNewPassword,
+      });
+      setRecoverySuccessMsg(res.message);
+      setRecoveryStep('SUCCESS');
+      if (res.email) {
+        setEmail(res.email);
+      }
+    } catch (err: any) {
+      setRecoveryError(err.message || 'Invalid or expired OTP code entered.');
+    } finally {
+      setRecoveryLoading(false);
+    }
+  };
+
+  const handleFindUsername = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRecoveryError(null);
+    setRecoveryLoading(true);
+    try {
+      const res = await api.auth.recoverUsername(recoveryIdentifier.trim());
+      setRecoveredAccounts(res.accounts);
+      if (res.accounts.length === 0) {
+        setRecoveryError('No registered citizen accounts found with this phone number.');
+      }
+    } catch (err: any) {
+      setRecoveryError(err.message || 'Could not find account. Please verify the phone number.');
+    } finally {
+      setRecoveryLoading(false);
+    }
+  };
+
+  const resetRecoveryModal = () => {
+    setShowRecoveryModal(false);
+    setRecoveryStep('REQUEST_OTP');
+    setRecoveryIdentifier('');
+    setRecoveryOtp('');
+    setRecoveryNewPassword('');
+    setRecoveryConfirmPassword('');
+    setRecoveryError(null);
+    setRecoverySuccessMsg(null);
+    setRecoveredAccounts([]);
   };
 
   return (
@@ -191,9 +292,24 @@ function LoginForm() {
 
           {/* Password */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
-              Password
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                Password
+              </label>
+              {activeTab === 'CITIZEN' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRecoveryIdentifier(email);
+                    setShowRecoveryModal(true);
+                  }}
+                  className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <KeyRound className="w-3 h-3" />
+                  <span>Forgot Password?</span>
+                </button>
+              )}
+            </div>
             <div className="relative">
               <input
                 type="password"
@@ -239,12 +355,24 @@ function LoginForm() {
 
         {/* Footers according to active tab */}
         {activeTab === 'CITIZEN' ? (
-          <p className="text-center text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800">
-            Don&apos;t have a citizen account?{' '}
-            <Link href="/register" className="font-bold text-blue-600 dark:text-blue-400 hover:underline">
-              Sign Up as Citizen
-            </Link>
-          </p>
+          <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2 text-center text-xs">
+            <p className="text-slate-500 dark:text-slate-400">
+              Don&apos;t have a citizen account?{' '}
+              <Link href="/register" className="font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                Sign Up as Citizen
+              </Link>
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setRecoveryTab('FIND_USERNAME');
+                setShowRecoveryModal(true);
+              }}
+              className="text-[11px] text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              Forgot registered email address? <span className="font-semibold underline">Recover credentials via phone</span>
+            </button>
+          </div>
         ) : activeTab === 'CENTRAL_DESK' ? (
           <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
             <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-[11px] text-purple-900 dark:text-purple-300">
@@ -299,6 +427,303 @@ function LoginForm() {
           </div>
         )}
       </div>
+
+      {/* Citizen Credential & Password Recovery Modal */}
+      {showRecoveryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 sm:p-7 space-y-5">
+            {/* Close Button */}
+            <button
+              onClick={resetRecoveryModal}
+              className="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Modal Header */}
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                <KeyRound className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white">Citizen Credential Recovery</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Reset password or retrieve registered account</p>
+              </div>
+            </div>
+
+            {/* Sub-tabs */}
+            <div className="grid grid-cols-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setRecoveryTab('RESET_PASSWORD');
+                  setRecoveryStep('REQUEST_OTP');
+                  setRecoveryError(null);
+                }}
+                className={`py-2 rounded-lg transition-all ${
+                  recoveryTab === 'RESET_PASSWORD'
+                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                }`}
+              >
+                Reset Password
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setRecoveryTab('FIND_USERNAME');
+                  setRecoveryError(null);
+                }}
+                className={`py-2 rounded-lg transition-all ${
+                  recoveryTab === 'FIND_USERNAME'
+                    ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                }`}
+              >
+                Find Registered Email
+              </button>
+            </div>
+
+            {/* Error & Success Messages */}
+            {recoveryError && (
+              <div className="p-3.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs text-red-700 dark:text-red-300 flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
+                <span>{recoveryError}</span>
+              </div>
+            )}
+
+            {recoverySuccessMsg && recoveryStep !== 'SUCCESS' && (
+              <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-xs text-emerald-800 dark:text-emerald-300 flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" />
+                <span>{recoverySuccessMsg}</span>
+              </div>
+            )}
+
+            {/* TAB 1: RESET PASSWORD */}
+            {recoveryTab === 'RESET_PASSWORD' && (
+              <>
+                {recoveryStep === 'REQUEST_OTP' && (
+                  <form onSubmit={handleRequestOtp} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1.5">
+                        Registered Email or Mobile Number
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. citizen@example.gov.in or 9876543210"
+                          value={recoveryIdentifier}
+                          onChange={(e) => setRecoveryIdentifier(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                        <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                      </div>
+                      <p className="text-[11px] text-slate-500 mt-1">
+                        A 6-digit verification code will be dispatched to your registered email address.
+                      </p>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={recoveryLoading || !recoveryIdentifier.trim()}
+                      className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                    >
+                      {recoveryLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Generating Secure OTP...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Send 6-Digit OTP</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+
+                {recoveryStep === 'CONFIRM_PASSWORD' && (
+                  <form onSubmit={handleConfirmReset} className="space-y-4">
+                    <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 text-xs text-blue-900 dark:text-blue-300">
+                      OTP sent to: <span className="font-mono font-bold">{recoveryMaskedEmail}</span>
+                      <button
+                        type="button"
+                        onClick={() => setRecoveryStep('REQUEST_OTP')}
+                        className="block mt-1 font-bold text-blue-600 hover:underline"
+                      >
+                        Change Email / Resend Code
+                      </button>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1.5">
+                        Enter 6-Digit Verification Code
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={6}
+                        required
+                        placeholder="123456"
+                        value={recoveryOtp}
+                        onChange={(e) => setRecoveryOtp(e.target.value.replace(/\D/g, ''))}
+                        className="w-full text-center text-xl font-mono tracking-widest py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-bold"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1.5">
+                        New Password
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showPasswordText ? 'text' : 'password'}
+                          required
+                          minLength={6}
+                          placeholder="••••••••••••"
+                          value={recoveryNewPassword}
+                          onChange={(e) => setRecoveryNewPassword(e.target.value)}
+                          className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPasswordText(!showPasswordText)}
+                          className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                        >
+                          {showPasswordText ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1.5">
+                        Confirm New Password
+                      </label>
+                      <input
+                        type={showPasswordText ? 'text' : 'password'}
+                        required
+                        placeholder="••••••••••••"
+                        value={recoveryConfirmPassword}
+                        onChange={(e) => setRecoveryConfirmPassword(e.target.value)}
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={recoveryLoading || recoveryOtp.length !== 6 || !recoveryNewPassword}
+                      className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                    >
+                      {recoveryLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Updating Password...</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>Set New Password & Confirm</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+
+                {recoveryStep === 'SUCCESS' && (
+                  <div className="text-center py-4 space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center mx-auto">
+                      <CheckCircle2 className="w-10 h-10" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-slate-900 dark:text-white">Password Reset Successful!</h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Your citizen account password has been updated. You can now log in.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        resetRecoveryModal();
+                      }}
+                      className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+                    >
+                      Proceed to Sign In
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* TAB 2: FIND USERNAME */}
+            {recoveryTab === 'FIND_USERNAME' && (
+              <form onSubmit={handleFindUsername} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1.5">
+                    Registered Mobile Number
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="tel"
+                      required
+                      placeholder="+91 9876543210"
+                      value={recoveryIdentifier}
+                      onChange={(e) => setRecoveryIdentifier(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                    <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Enter the phone number provided during your citizen registration.
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={recoveryLoading || !recoveryIdentifier.trim()}
+                  className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                >
+                  {recoveryLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Searching Accounts...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Find My Account Email</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+
+                {recoveredAccounts.length > 0 && (
+                  <div className="mt-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
+                    <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Matching Account Found:</p>
+                    {recoveredAccounts.map((acc, idx) => (
+                      <div key={idx} className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <div>
+                          <div className="text-xs font-bold text-slate-900 dark:text-white">{acc.name}</div>
+                          <div className="text-[11px] font-mono text-blue-600 dark:text-blue-400">{acc.masked_email}</div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRecoveryTab('RESET_PASSWORD');
+                            setRecoveryIdentifier(acc.masked_email);
+                          }}
+                          className="text-[11px] font-bold text-blue-600 hover:underline"
+                        >
+                          Reset Password
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -312,3 +737,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

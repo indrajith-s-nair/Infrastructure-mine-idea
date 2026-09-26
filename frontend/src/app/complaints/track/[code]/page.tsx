@@ -23,6 +23,7 @@ import {
   Languages,
   ShieldAlert,
   Sparkles,
+  Star,
 } from 'lucide-react';
 import { api, ComplaintData } from '@/lib/api';
 import { TrackingTimeline } from '@/components/TrackingTimeline';
@@ -321,21 +322,48 @@ export default function TrackComplaintDetailPage() {
 
           {/* Conditional Resolution Output Section */}
           {(complaint.status === 'RESOLVED' || (complaint.is_reopened && (complaint.resolved_at || complaint.previous_resolved_at))) && (
-            <ResolutionOutput
-              adminNotes={complaint.admin_notes || complaint.action_taken_report || null}
-              resolutionProofUrl={complaint.resolution_proof_url}
-              resolvedAt={complaint.resolved_at || complaint.previous_resolved_at}
-              trackingCode={complaint.tracking_code}
-              isReopened={complaint.is_reopened}
-              reopenReason={complaint.reopen_reason}
-              reopenedAt={complaint.reopened_at}
-              reopenCount={complaint.reopen_count}
-              visionVerificationStatus={complaint.vision_verification_status}
-              visionConfidenceScore={complaint.vision_confidence_score}
-              visionAuditNotes={complaint.vision_audit_notes}
-              onReopen={fetchComplaintData}
-            />
+            <>
+              <ResolutionOutput
+                adminNotes={complaint.admin_notes || complaint.action_taken_report || null}
+                resolutionProofUrl={complaint.resolution_proof_url}
+                resolvedAt={complaint.resolved_at || complaint.previous_resolved_at}
+                trackingCode={complaint.tracking_code}
+                isReopened={complaint.is_reopened}
+                reopenReason={complaint.reopen_reason}
+                reopenedAt={complaint.reopened_at}
+                reopenCount={complaint.reopen_count}
+                visionVerificationStatus={complaint.vision_verification_status}
+                visionConfidenceScore={complaint.vision_confidence_score}
+                visionAuditNotes={complaint.vision_audit_notes}
+                onReopen={fetchComplaintData}
+              />
+
+              {complaint.status === 'RESOLVED' && (
+                <div className="rounded-2xl border border-amber-200 dark:border-amber-900/60 bg-gradient-to-r from-amber-50/80 via-orange-50/50 to-amber-50/80 dark:from-amber-950/30 dark:via-orange-950/20 dark:to-amber-950/30 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="space-y-1 text-center sm:text-left">
+                    <div className="flex items-center justify-center sm:justify-start gap-2">
+                      <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                      <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                        How Was Your Grievance Redressal Experience?
+                      </h4>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                      Rate the officer promptness, repair durability, and site cleanliness in our official Civic Survey.
+                    </p>
+                  </div>
+
+                  <Link
+                    href={`/feedback?tracking_code=${encodeURIComponent(complaint.tracking_code)}`}
+                    className="shrink-0 py-2.5 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Star className="w-4 h-4 fill-white text-white" />
+                    <span>Rate Resolution</span>
+                  </Link>
+                </div>
+              )}
+            </>
           )}
+
 
           {/* If Rejected and not yet reopened, also allow reopening */}
           {complaint.status === 'REJECTED' && !complaint.is_reopened && (

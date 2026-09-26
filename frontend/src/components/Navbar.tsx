@@ -15,6 +15,7 @@ import {
   LogOut,
   Building2,
   Home,
+  Star,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -116,7 +117,20 @@ export const Navbar: React.FC = () => {
               <LayoutDashboard className="w-4 h-4" />
               <span>My Complaints</span>
             </Link>
+
+            <Link
+              href="/feedback"
+              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1.5 ${
+                isActive('/feedback')
+                  ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Star className="w-4 h-4 text-amber-500" />
+              <span>Civic Survey</span>
+            </Link>
           </nav>
+
 
           {/* Right Controls */}
           <div className="flex items-center gap-3">

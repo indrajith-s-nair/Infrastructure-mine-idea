@@ -338,3 +338,110 @@ class Complaint(models.Model):
             self.resolved_at = None
 
         super().save(*args, **kwargs)
+
+
+class CivicFeedback(models.Model):
+    """
+    Citizen Civic Survey & Public Infrastructure Feedback model.
+    Captures granular multidimensional citizen satisfaction metrics for grievance redressal,
+    officer performance evaluation, and municipal service quality.
+    """
+    complaint = models.ForeignKey(
+        Complaint,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='feedback_records',
+        verbose_name="Associated Grievance Ticket"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='civic_feedbacks',
+        verbose_name="Citizen User Account"
+    )
+    tracking_code = models.CharField(
+        max_length=64,
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name="Tracking Code (if applicable)"
+    )
+    citizen_name = models.CharField(
+        max_length=255,
+        default='Citizen',
+        verbose_name="Citizen Name"
+    )
+    citizen_contact = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        verbose_name="Contact / Phone / Email"
+    )
+    department_category = models.CharField(
+        max_length=150,
+        default='General Municipal Services',
+        db_index=True,
+        verbose_name="Department / Civic Service Category"
+    )
+    ward_or_area = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="Ward / Zone / Locality"
+    )
+
+    # Granular 1-5 Star Dimension Ratings
+    overall_rating = models.PositiveSmallIntegerField(
+        default=5,
+        verbose_name="Overall Experience (1-5)"
+    )
+    resolution_satisfaction = models.PositiveSmallIntegerField(
+        default=5,
+        verbose_name="Grievance Resolution Satisfaction (1-5)"
+    )
+    officer_timeliness = models.PositiveSmallIntegerField(
+        default=5,
+        verbose_name="Officer Promptness & Timeliness (1-5)"
+    )
+    work_quality = models.PositiveSmallIntegerField(
+        default=5,
+        verbose_name="Quality of Work & Durability (1-5)"
+    )
+    cleanliness_score = models.PositiveSmallIntegerField(
+        default=5,
+        verbose_name="Cleanliness & Site Restoration (1-5)"
+    )
+
+    comments = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="Qualitative Feedback / Suggestions"
+    )
+    photo_proof = models.FileField(
+        upload_to='feedback_proofs/%Y/%m/',
+        null=True,
+        blank=True,
+        verbose_name="Citizen Verification Photo"
+    )
+    would_recommend = models.BooleanField(
+        default=True,
+        verbose_name="Would Recommend DPIP Resolution Services"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        db_index=True,
+        verbose_name="Submitted At"
+    )
+
+    class Meta:
+        verbose_name = "Civic Feedback & Survey"
+        verbose_name_plural = "Civic Feedback & Surveys"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Feedback #{self.id} - {self.citizen_name} ({self.overall_rating}/5 Stars) [{self.department_category}]"
+
+

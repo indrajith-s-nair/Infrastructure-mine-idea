@@ -159,3 +159,83 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'name', 'email', 'phone_number', 'role', 'is_staff', 'date_joined', 'officer_profile']
         read_only_fields = ['id', 'role', 'is_staff', 'date_joined']
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    identifier = serializers.CharField(
+        required=True,
+        help_text="Registered email address or phone number"
+    )
+
+    def validate_identifier(self, value):
+        val = value.strip().lower()
+        # Look up by email or phone
+        user = User.objects.filter(email__iexact=val).first()
+        if not user:
+            user = User.objects.filter(phone_number__icontains=val.replace(' ', '')).first()
+        if not user:
+            raise serializers.ValidationError("No registered account found with the provided email or phone number.")
+        return val
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    identifier = serializers.CharField(required=True)
+    otp_code = serializers.CharField(required=True, max_length=6, min_length=6)
+    new_password = serializers.CharField(required=True, min_length=6, style={'input_type': 'password'})
+
+    def validate(self, attrs):
+        val = attrs.get('identifier', '').strip().lower()
+        otp = attrs.get('otp_code', '').strip()
+
+        user = User.objects.filter(email__iexact=val).first()
+        if not user:
+            user = User.objects.filter(phone_number__icontains=val.replace(' ', '')).first()
+
+        if not user:
+            raise serializers.ValidationError({"identifier": "User account not found."})
+
+        from .models import PasswordResetOTP
+        otp_record = PasswordResetOTP.objects.filter(
+            user=user,
+            otp_code=otp,
+            is_used=False
+        ).order_by('-created_at').first()
+
+        if not otp_record or not otp_record.is_valid():
+            raise serializers.ValidationError({"otp_code": "Invalid or expired OTP code entered."})
+
+        attrs['user'] = user
+        attrs['otp_record'] = otp_record
+        return attrs
+
+
+class RecoverUsernameSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(required=True)
+
+    def validate_phone_number(self, value):
+        digits_only = ''.join(filter(str.isdigit, value))
+        if len(digits_only) < 6:
+            raise serializers.ValidationError("Please provide a valid phone number.")
+
+        def _get_core_digits(p_str: str) -> str:
+            d = ''.join(filter(str.isdigit, str(p_str)))
+            if d.startswith('91') and len(d) > 10:
+                d = d[2:]
+            return d.lstrip('0')
+
+        input_core = _get_core_digits(value)
+
+        users = [
+            u for u in User.objects.all()
+            if input_core and (
+                input_core in _get_core_digits(u.phone_number) or
+                _get_core_digits(u.phone_number) in input_core or
+                value.strip() in u.phone_number
+            )
+        ]
+        if not users:
+            raise serializers.ValidationError("No citizen account associated with this phone number.")
+        return input_core
+
+
+

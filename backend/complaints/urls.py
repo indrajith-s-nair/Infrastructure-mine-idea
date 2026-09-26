@@ -12,6 +12,7 @@ from .views import (
     ComplaintReopenView,
     CentralDeskInboxView,
     CentralDeskDispatchView,
+    CivicFeedbackListCreateView,
 )
 from .transcribe_view import TranscribeAudioView
 
@@ -32,6 +33,10 @@ urlpatterns = [
     path('my-complaints', MyComplaintsListView.as_view(), name='complaint-my-list-noslash'),
     path('stats/', ComplaintStatsView.as_view(), name='complaint-stats'),
     path('stats', ComplaintStatsView.as_view(), name='complaint-stats-noslash'),
+
+    # Civic Survey & Public Infrastructure Feedback
+    path('feedback/', CivicFeedbackListCreateView.as_view(), name='civic-feedback-list-create'),
+    path('feedback', CivicFeedbackListCreateView.as_view(), name='civic-feedback-list-create-noslash'),
 
     # Phase 2: Frontline Officer Endpoints
     path('officer-inbox/', OfficerInboxView.as_view(), name='complaint-officer-inbox'),
@@ -63,3 +68,4 @@ urlpatterns = [
     path('<str:tracking_code>/central-desk/dispatch/', CentralDeskDispatchView.as_view(), name='central-desk-dispatch-alias'),
     path('<str:tracking_code>/central-desk/dispatch', CentralDeskDispatchView.as_view(), name='central-desk-dispatch-alias-noslash'),
 ]
+

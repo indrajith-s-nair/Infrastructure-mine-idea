@@ -658,3 +658,61 @@ class ComplaintResolveSerializer(serializers.ModelSerializer):
         instance.resolution_proof = validated_data.get('resolution_proof', instance.resolution_proof)
         instance.save()
         return instance
+
+
+class CivicFeedbackSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Citizen Civic Survey & Grievance Feedback.
+    """
+    overall_rating = serializers.IntegerField(min_value=1, max_value=5, default=5)
+    resolution_satisfaction = serializers.IntegerField(min_value=1, max_value=5, default=5)
+    officer_timeliness = serializers.IntegerField(min_value=1, max_value=5, default=5)
+    work_quality = serializers.IntegerField(min_value=1, max_value=5, default=5)
+    cleanliness_score = serializers.IntegerField(min_value=1, max_value=5, default=5)
+    tracking_code = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    photo_proof = serializers.FileField(required=False, allow_null=True)
+
+    class Meta:
+        from .models import CivicFeedback
+        model = CivicFeedback
+        fields = [
+            'id',
+            'complaint',
+            'tracking_code',
+            'citizen_name',
+            'citizen_contact',
+            'department_category',
+            'ward_or_area',
+            'overall_rating',
+            'resolution_satisfaction',
+            'officer_timeliness',
+            'work_quality',
+            'cleanliness_score',
+            'comments',
+            'photo_proof',
+            'would_recommend',
+            'created_at',
+        ]
+        read_only_fields = ['id', 'complaint', 'created_at']
+
+    def create(self, validated_data):
+        from .models import CivicFeedback, Complaint
+        tracking_code = validated_data.get('tracking_code')
+        complaint = None
+        if tracking_code:
+            complaint = Complaint.objects.filter(tracking_code__iexact=tracking_code.strip()).first()
+            if complaint:
+                validated_data['complaint'] = complaint
+                if not validated_data.get('department_category') or validated_data.get('department_category') == 'General Municipal Services':
+                    validated_data['department_category'] = complaint.department_category or 'General Municipal Services'
+                if not validated_data.get('ward_or_area'):
+                    validated_data['ward_or_area'] = complaint.address
+
+        request = self.context.get('request')
+        if request and request.user and request.user.is_authenticated:
+            validated_data['user'] = request.user
+            if not validated_data.get('citizen_name') or validated_data.get('citizen_name') == 'Citizen':
+                validated_data['citizen_name'] = request.user.name
+
+        return super().create(validated_data)
+
