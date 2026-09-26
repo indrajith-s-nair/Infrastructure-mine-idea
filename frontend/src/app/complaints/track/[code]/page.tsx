@@ -28,7 +28,7 @@ import {
 import { api, ComplaintData } from '@/lib/api';
 import { TrackingTimeline } from '@/components/TrackingTimeline';
 import { ResolutionOutput } from '@/components/ResolutionOutput';
-import { AuditLedgerView } from '@/components/AuditLedgerView';
+
 
 export default function TrackComplaintDetailPage() {
   const params = useParams();
@@ -379,11 +379,9 @@ export default function TrackComplaintDetailPage() {
               onReopen={fetchComplaintData}
             />
           )}
-
-          {/* Cryptographic SHA-256 Tamper-Evident Audit Trail */}
-          <AuditLedgerView trackingCode={complaint.tracking_code} />
         </div>
       )}
     </div>
   );
 }
+
